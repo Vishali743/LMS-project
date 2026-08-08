@@ -18,6 +18,8 @@ const defaultApiUrl = typeof window !== 'undefined' && window.location.hostname 
 
 const API_BASE = import.meta.env.VITE_API_URL || defaultApiUrl;
 
+const AuthContext = createContext();
+
 export function useAuth() {
   return useContext(AuthContext);
 }
