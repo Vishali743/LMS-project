@@ -68,8 +68,12 @@ export default function CourseCatalog() {
         setError('');
         
         // 1. Fetch categories list
-        const catRes = await api.get('/courses/categories');
-        setCategories(catRes.data.categories || []);
+        try {
+          const catRes = await api.get('/courses/categories');
+          setCategories(catRes.data?.categories || []);
+        } catch (catErr) {
+          console.warn('Failed to fetch categories list:', catErr);
+        }
 
         // 2. Fetch courses list
         const params = {
@@ -85,8 +89,11 @@ export default function CourseCatalog() {
         };
 
         const courseRes = await api.get('/courses', { params });
-        setCourses(courseRes.data.courses || []);
-        setTotalCount(courseRes.data.totalCount || 0);
+        const fetchedCourses = courseRes.data?.courses || [];
+        const count = courseRes.data?.totalCount !== undefined ? courseRes.data.totalCount : fetchedCourses.length;
+        
+        setCourses(fetchedCourses);
+        setTotalCount(count);
       } catch (err) {
         console.error('Error fetching catalog data:', err);
         setError('Failed to fetch courses catalog.');

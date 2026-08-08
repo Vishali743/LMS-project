@@ -106,7 +106,27 @@ api.interceptors.response.use(
       };
     }
 
-    // 4. Course Details / Listing Fallback
+    // 4a. Categories list fallback
+    if (url.includes('/courses/categories')) {
+      return {
+        data: {
+          categories: [
+            { id: 1, name: 'Programming', description: 'Foundations of logic, algorithmic thinking, and programming.' },
+            { id: 2, name: 'Web Development', description: 'Build responsive websites and web applications.' },
+            { id: 3, name: 'Mobile App Development', description: 'Design native and cross-platform mobile apps.' },
+            { id: 4, name: 'Artificial Intelligence', description: 'Neural networks, vision, NLP, and deep learning.' },
+            { id: 5, name: 'Machine Learning', description: 'Supervised and unsupervised models, decision trees.' },
+            { id: 6, name: 'Data Science', description: 'Data extraction, statistical modeling, and visualization.' },
+            { id: 7, name: 'Cyber Security', description: 'Penetration testing, encryption, and network defense.' },
+            { id: 8, name: 'Cloud Computing', description: 'AWS, GCP, and Microsoft Azure cloud architecture.' },
+            { id: 9, name: 'DevOps', description: 'CI/CD pipelines, Docker containerization, and Kubernetes.' },
+            { id: 10, name: 'UI/UX Design', description: 'User research, wireframing, and glassmorphic UI.' }
+          ]
+        }
+      };
+    }
+
+    // 4b. Course Details / Listing Fallback
     if (url.includes('/courses')) {
       if (url.match(/\/courses\/\d+/)) {
         const idMatch = url.match(/\/courses\/(\d+)/);
@@ -135,7 +155,7 @@ api.interceptors.response.use(
       return {
         data: {
           courses: mockCoursesList,
-          total: mockCoursesList.length
+          totalCount: mockCoursesList.length
         }
       };
     }
