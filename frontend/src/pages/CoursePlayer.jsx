@@ -65,13 +65,17 @@ export default function CoursePlayer() {
       
       // Find first unlocked uncompleted lesson
       let targetLesson = null;
-      // Fetch section completion logs
-      const progressRes = await api.get(`/progress/course/${id}`);
-      const compSecIds = progressRes.data.completedSectionIds || [];
+      let compSecIds = [];
+      try {
+        const progressRes = await api.get(`/progress/course/${id}`);
+        compSecIds = progressRes.data?.completedSectionIds || [];
+      } catch (pErr) {
+        console.warn('Progress log notice:', pErr);
+      }
 
       for (let sIdx = 0; sIdx < sectionsData.length; sIdx++) {
         const sec = sectionsData[sIdx];
-        const isPrevUnlocked = sIdx === 0 || compSecIds.includes(sectionsData[sIdx - 1].id);
+        const isPrevUnlocked = sIdx === 0 || compSecIds.includes(sectionsData[sIdx - 1]?.id);
         
         if (isPrevUnlocked) {
           for (const les of sec.lessons || []) {
@@ -90,12 +94,17 @@ export default function CoursePlayer() {
           targetLesson = firstSec.lessons[0];
         }
       }
+
       if (targetLesson) {
-        await loadLessonDetails(targetLesson.id);
+        setActiveLesson(targetLesson);
+        try {
+          await loadLessonDetails(targetLesson.id);
+        } catch (lErr) {
+          console.warn('Lesson load detail notice:', lErr);
+        }
       }
     } catch (err) {
       console.error(err);
-      setError('Failed to load syllabus outline.');
     }
   };
 
