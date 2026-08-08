@@ -134,13 +134,71 @@ function GlobalBackNavigation() {
   );
 }
 
+// Robust Error Boundary to prevent blank screens
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('LMS App Render Error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{
+          minHeight: '100vh',
+          backgroundColor: '#06070a',
+          color: '#f3f4f6',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px',
+          textAlign: 'center',
+          fontFamily: 'Inter, sans-serif'
+        }}>
+          <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#ff3344', marginBottom: '12px' }}>
+            SkeinLMS Application Notice
+          </h2>
+          <p style={{ color: '#9ca3af', marginBottom: '20px', maxWidth: '480px' }}>
+            The application encountered a temporary display initialization refresh.
+          </p>
+          <button 
+            onClick={() => window.location.reload()}
+            style={{
+              padding: '10px 24px',
+              borderRadius: '8px',
+              background: 'linear-gradient(135deg, #ff3344 0%, #991b1b 100%)',
+              color: '#fff',
+              border: 'none',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+          >
+            Reload Application
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-          <Navbar />
-          <PageTransitionLoader />
+    <ErrorBoundary>
+      <Router>
+        <AuthProvider>
+          <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+            <Navbar />
+            <PageTransitionLoader />
           
           <div className="main-content" style={{ flex: 1 }}>
             <GlobalBackNavigation />
@@ -362,6 +420,7 @@ function App() {
         </div>
       </AuthProvider>
     </Router>
+  </ErrorBoundary>
   );
 }
 
