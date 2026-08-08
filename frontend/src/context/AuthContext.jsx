@@ -12,8 +12,11 @@ import {
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import axios from 'axios';
 
-const AuthContext = createContext();
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const defaultApiUrl = typeof window !== 'undefined' && window.location.hostname !== 'localhost' 
+  ? '/api' 
+  : 'http://localhost:5000/api';
+
+const API_BASE = import.meta.env.VITE_API_URL || defaultApiUrl;
 
 export function useAuth() {
   return useContext(AuthContext);
