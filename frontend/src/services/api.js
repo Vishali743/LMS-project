@@ -7,7 +7,7 @@ const defaultApiUrl = typeof window !== 'undefined' && window.location.hostname 
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || defaultApiUrl,
-  timeout: 8000, // 8 second timeout before fail-safe mock fallback
+  timeout: 8000,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -42,11 +42,18 @@ api.interceptors.request.use(
   }
 );
 
-// Pre-seeded mock datasets for bulletproof offline / cold-start fallback
+// Pre-seeded mock course datasets matching catalog specifications (Paid > ₹500, Free = ₹0.00)
 const mockCoursesList = [
-  { id: 1, title: 'Programming Fundamentals', category_name: 'Programming', instructor_name: 'Alex Rivera', price: '49.99', thumbnail_url: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop&q=80', description: 'Foundations of computer programming, algorithms, logic, and problem solving.' },
-  { id: 2, title: 'Full-Stack Web Development Architecture', category_name: 'Web Development', instructor_name: 'Emily Chen', price: '79.99', thumbnail_url: 'https://images.unsplash.com/photo-1547658719-da2b51169166?w=600&auto=format&fit=crop&q=80', description: 'Build responsive web apps using HTML5, CSS Grid, Flexbox, React, and Node.js.' },
-  { id: 3, title: 'Mobile Application Engineering with React Native', category_name: 'Mobile App Development', instructor_name: 'Alex Rivera', price: '89.99', thumbnail_url: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80', description: 'Cross-platform mobile application development for iOS and Android.' }
+  { id: 1, title: 'Programming Fundamentals', category_name: 'Programming', instructor_name: 'Alex Rivera', price: '0.00', thumbnail_url: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop&q=80', description: 'Foundations of computer programming, algorithms, logic, and problem solving.' },
+  { id: 2, title: 'Full-Stack Web Development Architecture', category_name: 'Web Development', instructor_name: 'Emily Chen', price: '1299.00', thumbnail_url: 'https://images.unsplash.com/photo-1547658719-da2b51169166?w=600&auto=format&fit=crop&q=80', description: 'Build responsive web apps using HTML5, CSS Grid, Flexbox, React, and Node.js.' },
+  { id: 3, title: 'Mobile Application Engineering with React Native', category_name: 'Mobile App Development', instructor_name: 'Alex Rivera', price: '1499.00', thumbnail_url: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80', description: 'Cross-platform mobile application development for iOS and Android.' },
+  { id: 4, title: 'Artificial Intelligence & Neural Networks', category_name: 'Artificial Intelligence', instructor_name: 'Dr. Sarah Jenkins', price: '1999.00', thumbnail_url: 'https://images.unsplash.com/photo-1555255707-c07966088b7b?w=600&auto=format&fit=crop&q=80', description: 'Master deep neural networks, computer vision, and transformer models.' },
+  { id: 5, title: 'Applied Machine Learning & Predictive Analytics', category_name: 'Machine Learning', instructor_name: 'Michael Adams', price: '0.00', thumbnail_url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80', description: 'Supervised and unsupervised models, decision trees, and dataset training.' },
+  { id: 6, title: 'Data Science & Big Data Engineering', category_name: 'Data Science', instructor_name: 'Michael Adams', price: '1799.00', thumbnail_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80', description: 'Data extraction, statistical model validation, and big data visualization.' },
+  { id: 7, title: 'Cyber Security & Ethical Hacking Architecture', category_name: 'Cyber Security', instructor_name: 'David Kim', price: '2199.00', thumbnail_url: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&auto=format&fit=crop&q=80', description: 'Penetration testing, encryption protocols, and network defense.' },
+  { id: 8, title: 'Cloud Computing & AWS Infrastructure Mastery', category_name: 'Cloud Computing', instructor_name: 'Jessica Taylor', price: '0.00', thumbnail_url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop&q=80', description: 'Architecting high-availability infrastructure on AWS, GCP, and Azure.' },
+  { id: 9, title: 'DevOps & Kubernetes Container Pipelines', category_name: 'DevOps', instructor_name: 'Alex Rivera', price: '2499.00', thumbnail_url: 'https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=600&auto=format&fit=crop&q=80', description: 'Continuous integration, delivery pipelines, Docker, and Kubernetes.' },
+  { id: 10, title: 'UI/UX Glassmorphic Visual Design', category_name: 'UI/UX Design', instructor_name: 'Emily Chen', price: '999.00', thumbnail_url: 'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=600&auto=format&fit=crop&q=80', description: 'User research methodology, wireframing, and glassmorphic prototyping.' }
 ];
 
 const mockEnrollmentsList = [
