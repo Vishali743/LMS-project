@@ -13,7 +13,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import axios from 'axios';
 
 const defaultApiUrl = typeof window !== 'undefined' && window.location.hostname !== 'localhost' 
-  ? 'https://lms-project-1-uwbn.onrender.com/api' 
+  ? '/api' 
   : 'http://localhost:5000/api';
 
 const API_BASE = import.meta.env.VITE_API_URL || defaultApiUrl;
