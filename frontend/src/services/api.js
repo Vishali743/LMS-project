@@ -139,23 +139,32 @@ api.interceptors.response.use(
         const idMatch = url.match(/\/courses\/(\d+)/);
         const courseId = idMatch ? parseInt(idMatch[1], 10) : 1;
         const selected = mockCoursesList.find(c => c.id === courseId) || mockCoursesList[0];
+        const sectionsPayload = [
+          {
+            id: 101,
+            title: 'Module 1: Foundations & Architecture',
+            lessons: [
+              { id: 1, title: 'Lecture 1: Core Fundamentals & Principles', duration: '15:00', duration_minutes: 15, video_url: 'https://www.youtube.com/embed/zOjov-2OZ0E', content_url: 'https://www.youtube.com/embed/zOjov-2OZ0E', text_content: '### Core Architecture Overview\nLearn foundational concepts, structure, and principles.' },
+              { id: 2, title: 'Lecture 2: Applied Techniques & Best Practices', duration: '20:00', duration_minutes: 20, video_url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4', content_url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4', text_content: '### Applied Methods\nMaster practical methods and component patterns.' }
+            ],
+            quiz: { id: 201, title: 'Module 1 Assessment Quiz' },
+            assignment: { id: 301, title: 'Module 1 Hands-On Assignment', description: 'Submit your solution for the module architecture exercise.' }
+          },
+          {
+            id: 102,
+            title: 'Module 2: Industrial Deployment & Best Practices',
+            lessons: [
+              { id: 3, title: 'Lecture 3: Production Deployment & Pipelines', duration: '25:00', duration_minutes: 25, video_url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', content_url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text_content: '### Production Workflows\nDeploy scalable applications to cloud infrastructure.' }
+            ]
+          }
+        ];
         return {
           data: {
             course: {
               ...selected,
-              sections: [
-                {
-                  id: 101,
-                  title: 'Module 1: Foundations & Architecture',
-                  lessons: [
-                    { id: 1, title: 'Lecture 1: Core Fundamentals & Principles', duration: '15:00', duration_minutes: 15, video_url: 'https://www.youtube.com/embed/zOjov-2OZ0E', content_url: 'https://www.youtube.com/embed/zOjov-2OZ0E', text_content: '### Core Architecture Overview\nLearn foundational concepts, structure, and principles.' },
-                    { id: 2, title: 'Lecture 2: Applied Techniques & Best Practices', duration: '20:00', duration_minutes: 20, video_url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4', content_url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4', text_content: '### Applied Methods\nMaster practical methods and component patterns.' }
-                  ],
-                  quiz: { id: 201, title: 'Module 1 Assessment Quiz' },
-                  assignment: { id: 301, title: 'Module 1 Hands-On Assignment', description: 'Submit your solution for the module architecture exercise.' }
-                }
-              ]
-            }
+              sections: sectionsPayload
+            },
+            sections: sectionsPayload
           }
         };
       }

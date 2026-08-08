@@ -60,7 +60,7 @@ export default function CoursePlayer() {
     try {
       const response = await api.get(`/courses/${id}`);
       setCourse(response.data.course);
-      const sectionsData = response.data.sections || [];
+      const sectionsData = response.data.sections || response.data.course?.sections || [];
       setSections(sectionsData);
       
       // Find first unlocked uncompleted lesson

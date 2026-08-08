@@ -51,7 +51,7 @@ export default function CourseDetail() {
       const response = await api.get(`/courses/${id}`);
       const courseData = response.data.course;
       setCourse(courseData);
-      setSections(response.data.sections || []);
+      setSections(response.data.sections || courseData?.sections || []);
       setReviews(response.data.reviews || []);
       setRatingSummary(response.data.ratingSummary || { totalReviews: 0, averageRating: 0 });
 
