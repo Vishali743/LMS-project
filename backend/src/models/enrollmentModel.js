@@ -1,46 +1,58 @@
 const firebase = require('../config/firebase');
 
 function useFallback() {
-  return !firebase.isInitialized();
+  const firebase = require('../config/firebase');
+  const db = require('../config/db');
+  return !db.getPool() && (!firebase.isInitialized() || !process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
 }
 
 async function getStudentEnrollments(studentId) {
-  if (useFallback()) {
-    if (!global.mockEnrollments || global.mockEnrollments.length === 0) {
-      global.mockEnrollments = [
-        { id: 'enr_1', student_id: '1', course_id: '12', enrolled_at: new Date().toISOString(), completed_at: null },
-        { id: 'enr_2', student_id: '1', course_id: '22', enrolled_at: new Date().toISOString(), completed_at: null },
-        { id: 'enr_3', student_id: '1', course_id: '32', enrolled_at: new Date().toISOString(), completed_at: null },
-        { id: 'enr_4', student_id: 'mock-student-uid', course_id: '12', enrolled_at: new Date().toISOString(), completed_at: null },
-        { id: 'enr_5', student_id: 'mock-student-uid', course_id: '22', enrolled_at: new Date().toISOString(), completed_at: null }
-      ];
-    }
-    let list = Object.values(global.mockEnrollments || {}).filter(e => String(e.student_id) === String(studentId));
-    if (list.length === 0 && global.mockCourses) {
-      const initialCourses = Object.values(global.mockCourses).slice(0, 3);
-      initialCourses.forEach((c) => {
-        const doc = { id: `enr_${studentId}_${c.id}`, student_id: String(studentId), course_id: String(c.id), enrolled_at: new Date().toISOString(), completed_at: null };
-        global.mockEnrollments.push(doc);
-        list.push(doc);
+  try {
+    if (useFallback()) {
+      const courseModel = require('./courseModel');
+      const allCoursesRes = await courseModel.getPublishedCourses({});
+      const coursesList = allCoursesRes.courses || [];
+
+      if (!global.mockEnrollments || global.mockEnrollments.length === 0) {
+        global.mockEnrollments = coursesList.slice(0, 3).map((c, i) => ({
+          id: `enr_${i + 1}`,
+          student_id: String(studentId),
+          course_id: String(c.id),
+          enrolled_at: new Date().toISOString(),
+          completed_at: null
+        }));
+      }
+
+      let list = (global.mockEnrollments || []).filter(e => String(e.student_id) === String(studentId) || e.student_id === '1' || e.student_id === 'mock-student-uid');
+      
+      if (list.length === 0 && coursesList.length > 0) {
+        list = coursesList.slice(0, 3).map((c, i) => ({
+          id: `enr_${studentId}_${c.id}`,
+          student_id: String(studentId),
+          course_id: String(c.id),
+          enrolled_at: new Date().toISOString(),
+          completed_at: null
+        }));
+        global.mockEnrollments.push(...list);
+      }
+
+      return list.map(item => {
+        const course = coursesList.find(c => String(c.id) === String(item.course_id)) || coursesList[0];
+        return {
+          ...item,
+          id: course ? course.id : item.course_id,
+          course_id: item.course_id,
+          enrollment_id: item.id,
+          title: course ? course.title : 'Course Title',
+          description: course ? course.description : '',
+          thumbnail_url: course ? course.thumbnail_url : '',
+          price: course ? course.price : '0.00',
+          instructor_name: course ? (course.instructor_name || 'Jessica Taylor') : 'Jessica Taylor',
+          total_lessons: course?.sections ? course.sections.reduce((a, s) => a + (s.lessons?.length || 0), 0) : 6,
+          completed_lessons: 0
+        };
       });
     }
-    return list.map(item => {
-      const course = Object.values(global.mockCourses || {}).find(c => String(c.id) === String(item.course_id));
-      return {
-        ...item,
-        id: course ? course.id : item.course_id,
-        course_id: item.course_id,
-        enrollment_id: item.id,
-        title: course ? course.title : 'Course Title',
-        description: course ? course.description : '',
-        thumbnail_url: course ? course.thumbnail_url : '',
-        price: course ? course.price : '0.00',
-        instructor_name: course ? (course.instructor_name || 'Jessica Taylor') : 'Jessica Taylor',
-        total_lessons: course?.sections ? course.sections.reduce((a, s) => a + (s.lessons?.length || 0), 0) : 6,
-        completed_lessons: 0
-      };
-    });
-  }
 
   try {
     const db = firebase.getFirestoreDb();
