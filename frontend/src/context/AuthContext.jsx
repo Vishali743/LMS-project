@@ -302,25 +302,37 @@ export function AuthProvider({ children }) {
 
   // Listen to Auth State Changes
   useEffect(() => {
-    if (isMockConfig) {
+    if (isMockConfig || !auth || typeof auth.onAuthStateChanged !== 'function') {
       setLoading(false);
       return;
     }
 
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      setCurrentUser(user);
-      if (user) {
-        const token = await user.getIdToken();
-        localStorage.setItem('authToken', token);
-        await fetchFirestoreProfile(user);
-      } else {
-        localStorage.removeItem('authToken');
-        setDbUser(null);
-      }
+    let unsubscribe;
+    try {
+      unsubscribe = auth.onAuthStateChanged(async (user) => {
+        setCurrentUser(user);
+        if (user) {
+          try {
+            const token = await user.getIdToken();
+            localStorage.setItem('authToken', token);
+            await fetchFirestoreProfile(user);
+          } catch (tokenErr) {
+            console.warn('Token retrieval warning:', tokenErr.message);
+          }
+        } else {
+          localStorage.removeItem('authToken');
+          setDbUser(null);
+        }
+        setLoading(false);
+      });
+    } catch (err) {
+      console.warn('Auth state listener notice:', err.message);
       setLoading(false);
-    });
+    }
 
-    return unsubscribe;
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
+    };
   }, [isMockConfig]);
 
   const value = {
