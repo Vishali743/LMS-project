@@ -133,7 +133,33 @@ api.interceptors.response.use(
       };
     }
 
-    // 4b. Course Details / Listing Fallback
+    // 4c. Lesson Details Fallback
+    if (url.includes('/courses/lessons/') || url.includes('/lessons/')) {
+      const idMatch = url.match(/lessons\/(\d+)/);
+      const lessonId = idMatch ? parseInt(idMatch[1], 10) : 1;
+      const lessonMap = {
+        1: { id: 1, title: 'Lecture 1: Core Fundamentals & Principles', content_type: 'video', video_url: 'https://www.youtube.com/embed/zOjov-2OZ0E', content_url: 'https://www.youtube.com/embed/zOjov-2OZ0E', duration: '15:00', duration_minutes: 15, text_content: '### Core Architecture Overview\nLearn foundational concepts, structure, and principles of computer systems and software design.' },
+        2: { id: 2, title: 'Lecture 2: Applied Techniques & Best Practices', content_type: 'video', video_url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4', content_url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4', duration: '20:00', duration_minutes: 20, text_content: '### Applied Methods\nMaster practical methods, component patterns, and responsive UI layout design.' },
+        3: { id: 3, title: 'Lecture 3: Production Deployment & Pipelines', content_type: 'video', video_url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', content_url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', duration: '25:00', duration_minutes: 25, text_content: '### Production Workflows\nDeploy scalable applications to cloud infrastructure with automated CI/CD pipelines.' }
+      };
+      const selectedLesson = lessonMap[lessonId] || {
+        id: lessonId,
+        title: `Lecture ${lessonId}: Applied Module Syllabus`,
+        content_type: 'video',
+        video_url: 'https://www.youtube.com/embed/zOjov-2OZ0E',
+        content_url: 'https://www.youtube.com/embed/zOjov-2OZ0E',
+        duration: '15:00',
+        duration_minutes: 15,
+        text_content: '### Lecture Material\nComplete lesson content overview and video lecture.'
+      };
+      return {
+        data: {
+          lesson: selectedLesson
+        }
+      };
+    }
+
+    // 4d. Course Details / Listing Fallback
     if (url.includes('/courses')) {
       if (url.match(/\/courses\/\d+/)) {
         const idMatch = url.match(/\/courses\/(\d+)/);
