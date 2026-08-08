@@ -1,7 +1,8 @@
 const firebase = require('../config/firebase');
 
 function useFallback() {
-  return !firebase.isInitialized();
+  const db = require('../config/db');
+  return !db.getPool() && (!firebase.isInitialized() || !process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
 }
 
 async function logActivity(userId, activityType, description) {

@@ -175,12 +175,20 @@ async function register(req, res) {
     // 4. Save details to database
     const userId = await userModel.create(localUid, email, displayName, role || 'student', '', hashedPassword, studentCode);
 
-    // 5. Log Activity
-    await activityModel.logActivity(userId, 'register', `Created new account with role: ${role || 'student'}`);
+    // 5. Log Activity (fail-safe)
+    try {
+      await activityModel.logActivity(userId, 'register', `Created new account with role: ${role || 'student'}`);
+    } catch (e) {
+      console.warn('Activity log failed silently:', e.message);
+    }
 
-    // Add Welcome Notification
-    const notificationModel = require('../models/notificationModel');
-    await notificationModel.addNotification(userId, 'Welcome to Skein LMS! Your scholar portal account is active.', 'general');
+    // Add Welcome Notification (fail-safe)
+    try {
+      const notificationModel = require('../models/notificationModel');
+      await notificationModel.addNotification(userId, 'Welcome to Skein LMS! Your scholar portal account is active.', 'general');
+    } catch (e) {
+      console.warn('Notification log failed silently:', e.message);
+    }
 
     // 6. Send welcome email to registered address (async retry)
     emailService.sendWelcomeEmail(email, displayName, studentCode).catch(err => {
