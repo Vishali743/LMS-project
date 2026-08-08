@@ -64,7 +64,7 @@ export default function QuizComponent({ quizId, onComplete }) {
       setError('');
       // Format answers for API payload: array of { questionId, selectedOptionId }
       const formattedAnswers = Object.entries(selectedAnswers).map(([qId, optId]) => ({
-        questionId: parseInt(qId),
+        questionId: isNaN(parseInt(qId, 10)) ? qId : parseInt(qId, 10),
         selectedOptionId: optId
       }));
 
