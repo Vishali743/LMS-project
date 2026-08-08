@@ -117,8 +117,9 @@ async function bootstrap() {
     }
 
     // 4. Start Express server
-    app.listen(PORT, () => {
-      console.log(`LMS Server successfully booted and listening on port ${PORT}`);
+    const HOST = process.env.HOST || '0.0.0.0';
+    app.listen(PORT, HOST, () => {
+      console.log(`LMS Server successfully booted and listening on ${HOST}:${PORT}`);
     });
   } catch (error) {
     console.error('Startup crash: Failed to bootstrap backend services:', error.message);
