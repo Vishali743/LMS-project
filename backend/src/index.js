@@ -34,8 +34,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 // Trigger nodemon restart 3
-// Basic Health Check Route
-app.get('/health', (req, res) => {
+// Basic Health Check Routes
+app.get(['/health', '/api/health'], (req, res) => {
   res.json({ 
     status: 'ok', 
     timestamp: new Date(),
