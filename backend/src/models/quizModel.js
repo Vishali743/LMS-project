@@ -1,7 +1,8 @@
 const db = require('../config/db');
 
 function useFallback() {
-  return !db.getPool();
+  const firebase = require('../config/firebase');
+  return !db.getPool() && (!firebase.isInitialized() || !process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
 }
 
 if (!global.mockQuizzes) {

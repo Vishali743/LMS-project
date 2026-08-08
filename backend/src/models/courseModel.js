@@ -181,7 +181,8 @@ if (!global.mockCourses) {
 }
 
 function useFallback() {
-  return !firebase.isInitialized();
+  const db = require('../config/db');
+  return !db.getPool() && (!firebase.isInitialized() || !process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
 }
 
 async function getAllCategories() {
