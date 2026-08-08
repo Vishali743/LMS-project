@@ -4,11 +4,12 @@
   "description": "Full-stack Online Learning Management System (LMS)",
   "scripts": {
     "install:all": "npm install && npm install --prefix backend && npm install --prefix frontend --legacy-peer-deps",
+    "build": "npm run install:all && npm run build --prefix frontend",
     "backend": "npm run dev --prefix backend",
     "frontend": "npm run dev --prefix frontend",
     "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
     "start:prod": "npm run build --prefix frontend && npm start --prefix backend",
-    "start": "npm run dev",
+    "start": "node backend/src/index.js",
     "verify-firebase": "node backend/src/config/verifyFirebase.js"
   },
   "devDependencies": {

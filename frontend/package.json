@@ -11,6 +11,7 @@
   "dependencies": {
     "axios": "^1.6.8",
     "firebase": "^10.9.0",
+    "lms-backend": "file:../backend",
     "lms-monorepo": "file:..",
     "lucide-react": "^0.363.0",
     "react": "^19.2.7",
