@@ -167,13 +167,28 @@ class ErrorBoundary extends React.Component {
           <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#ff3344', marginBottom: '12px' }}>
             SkeinLMS Application Notice
           </h2>
-          <p style={{ color: '#9ca3af', marginBottom: '20px', maxWidth: '480px' }}>
-            The application encountered a temporary display initialization refresh.
+          <p style={{ color: '#9ca3af', marginBottom: '16px', maxWidth: '500px', fontSize: '14px' }}>
+            The application caught an unexpected component initialization event:
           </p>
+          <div style={{
+            color: '#ff6b7b',
+            fontFamily: 'monospace',
+            fontSize: '13px',
+            backgroundColor: 'rgba(255, 51, 68, 0.08)',
+            border: '1px solid rgba(255, 51, 68, 0.2)',
+            padding: '14px 20px',
+            borderRadius: '8px',
+            marginBottom: '24px',
+            maxWidth: '640px',
+            wordBreak: 'break-word',
+            textAlign: 'left'
+          }}>
+            {this.state.error ? this.state.error.toString() : 'Unknown Component Error'}
+          </div>
           <button 
             onClick={() => window.location.reload()}
             style={{
-              padding: '10px 24px',
+              padding: '12px 28px',
               borderRadius: '8px',
               background: 'linear-gradient(135deg, #ff3344 0%, #991b1b 100%)',
               color: '#fff',

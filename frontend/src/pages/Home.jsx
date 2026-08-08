@@ -32,14 +32,22 @@ function AnimatedCounter({ target, suffix = '', duration = 1500 }) {
       }
     };
 
-    if (elementRef.current) {
-      observer = new IntersectionObserver(handleIntersect, { threshold: 0.1 });
-      observer.observe(elementRef.current);
+    if (elementRef.current && typeof window !== 'undefined' && 'IntersectionObserver' in window) {
+      try {
+        observer = new IntersectionObserver(handleIntersect, { threshold: 0.1 });
+        observer.observe(elementRef.current);
+      } catch (err) {
+        setCount(target);
+      }
+    } else {
+      setCount(target);
     }
 
     return () => {
-      if (observer) observer.disconnect();
-      if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
+      if (observer && typeof observer.disconnect === 'function') observer.disconnect();
+      if (animationFrameId && typeof window !== 'undefined' && window.cancelAnimationFrame) {
+        window.cancelAnimationFrame(animationFrameId);
+      }
     };
   }, [target, duration]);
 
