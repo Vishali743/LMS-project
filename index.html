@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkeinLMS | Online Learning Management System</title>
+  <style>
+    body {
+      background-color: #0a0b10;
+      color: #ffffff;
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      max-width: 480px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .spinner {
+      width: 42px;
+      height: 42px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top: 3px solid #6366f1;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 24px auto;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 12px 24px;
+      background: #6366f1;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: #4f46e5;
+    }
+  </style>
+  <script>
+    // Automatically redirect Go Live (port 5500) to the running LMS app (port 5173 / 5000)
+    setTimeout(function () {
+      window.location.href = "http://localhost:5173/";
+    }, 500);
+  </script>
+</head>
+
+<body>
+  <div class="card">
+    <h2 style="margin-top: 0;">🚀 Launching Skein LMS...</h2>
+    <div class="spinner"></div>
+    <p style="color: #94a3b8; font-size: 14px; line-height: 1.6;">
+      Connecting to local server. If you are not redirected automatically, click the button below:
+    </p>
+    <a href="http://localhost:5173/" class="btn">Open LMS Application</a>
+  </div>
+</body>
+
+</html>
