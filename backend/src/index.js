@@ -104,47 +104,44 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal Server Error: ' + err.message });
 });
 
-// Bootstrap server
-async function bootstrap() {
-  try {
-    // 1. Initialize Database pool & create schema if not initialized
-    try {
-      await initDB();
-    } catch (dbError) {
-      console.warn('MySQL initialization failed, continuing in offline mock mode:', dbError.message);
-    }
-    
-    // 2. Initialize Firebase SDK
-    try {
-      initFirebase();
-      const firebase = require('./config/firebase');
-      if (firebase.isInitialized()) {
-        const { seedFirestoreDatabase } = require('./config/seed');
-        await seedFirestoreDatabase(firebase.getFirestoreDb());
-      }
-    } catch (fbError) {
-      console.warn('Firebase SDK initialization failed, continuing in offline mock mode:', fbError.message);
-    }
-    
-    // 3. Connect to MongoDB if MONGODB_URI is provided
-    if (process.env.MONGODB_URI) {
-      try {
-        const mongoose = require('mongoose');
-        await mongoose.connect(process.env.MONGODB_URI);
-        console.log('MongoDB successfully connected via mongoose.');
-      } catch (mongoError) {
-        console.warn('MongoDB connection failed:', mongoError.message);
-      }
-    }
+// Start Express server immediately to pass cloud health checks instantly
+const HOST = process.env.HOST || '0.0.0.0';
+const parsedPort = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
 
-    // 4. Start Express server
-    const HOST = process.env.HOST || '0.0.0.0';
-    app.listen(PORT, HOST, () => {
-      console.log(`LMS Server successfully booted and listening on ${HOST}:${PORT}`);
-    });
-  } catch (error) {
-    console.error('Startup crash: Failed to bootstrap backend services:', error.message);
-    process.exit(1);
+app.listen(parsedPort, HOST, () => {
+  console.log(`LMS Server successfully booted and listening on ${HOST}:${parsedPort}`);
+});
+
+// Asynchronously bootstrap background services (DB, Firebase, Mongo) without blocking HTTP requests
+async function bootstrap() {
+  // 1. Initialize Database pool & create schema if not initialized
+  try {
+    await initDB();
+  } catch (dbError) {
+    console.warn('MySQL initialization failed, continuing in offline mock mode:', dbError.message);
+  }
+  
+  // 2. Initialize Firebase SDK
+  try {
+    initFirebase();
+    const firebase = require('./config/firebase');
+    if (firebase.isInitialized()) {
+      const { seedFirestoreDatabase } = require('./config/seed');
+      await seedFirestoreDatabase(firebase.getFirestoreDb());
+    }
+  } catch (fbError) {
+    console.warn('Firebase SDK initialization failed, continuing in offline mock mode:', fbError.message);
+  }
+  
+  // 3. Connect to MongoDB if MONGODB_URI is provided
+  if (process.env.MONGODB_URI) {
+    try {
+      const mongoose = require('mongoose');
+      await mongoose.connect(process.env.MONGODB_URI);
+      console.log('MongoDB successfully connected via mongoose.');
+    } catch (mongoError) {
+      console.warn('MongoDB connection failed:', mongoError.message);
+    }
   }
 }
 
