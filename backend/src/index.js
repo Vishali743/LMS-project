@@ -71,9 +71,11 @@ app.post('/api/upload', authMiddleware, upload.single('file'), (req, res) => {
 
 // Serve static files from the React frontend build directory if present
 const candidatePaths = [
-  path.join(__dirname, '../../frontend/dist'),
+  path.join(__dirname, 'public'),
   path.join(__dirname, '../public'),
-  path.join(__dirname, '../dist'),
+  path.join(process.cwd(), 'public'),
+  path.join(process.cwd(), 'backend/public'),
+  path.join(__dirname, '../../frontend/dist'),
   path.join(process.cwd(), 'frontend/dist'),
   path.join(process.cwd(), 'dist')
 ];
