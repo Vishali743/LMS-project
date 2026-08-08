@@ -69,13 +69,23 @@ app.post('/api/upload', authMiddleware, upload.single('file'), (req, res) => {
   });
 });
 
-// Serve static files from the React frontend build directory
-app.use(express.static(path.join(__dirname, '../../frontend/dist')));
+// Serve static files from the React frontend build directory if present
+const frontendDistPath = path.join(__dirname, '../../frontend/dist');
+const fs = require('fs');
 
-// Wildcard route to handle SPA routing by redirecting requests to React's index.html
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
-});
+if (fs.existsSync(frontendDistPath)) {
+  app.use(express.static(frontendDistPath));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendDistPath, 'index.html'));
+  });
+} else {
+  app.get('/', (req, res) => {
+    res.json({ 
+      status: 'ok', 
+      message: 'Skein LMS Backend API is live and operational.' 
+    });
+  });
+}
 
 // Global Error Handler
 app.use((err, req, res, next) => {
