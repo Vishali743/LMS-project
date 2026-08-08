@@ -85,6 +85,12 @@ let frontendDistPath = candidatePaths.find(p => fs.existsSync(path.join(p, 'inde
 if (frontendDistPath) {
   console.log(`Serving static frontend assets from: ${frontendDistPath}`);
   app.use(express.static(frontendDistPath));
+  
+  // Return JSON 404 for unhandled API routes
+  app.use('/api', (req, res) => {
+    res.status(404).json({ error: 'API endpoint not found' });
+  });
+
   app.get('*', (req, res) => {
     res.sendFile(path.join(frontendDistPath, 'index.html'));
   });
