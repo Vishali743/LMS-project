@@ -70,15 +70,24 @@ app.post('/api/upload', authMiddleware, upload.single('file'), (req, res) => {
 });
 
 // Serve static files from the React frontend build directory if present
-const frontendDistPath = path.join(__dirname, '../../frontend/dist');
-const fs = require('fs');
+const candidatePaths = [
+  path.join(__dirname, '../../frontend/dist'),
+  path.join(__dirname, '../public'),
+  path.join(__dirname, '../dist'),
+  path.join(process.cwd(), 'frontend/dist'),
+  path.join(process.cwd(), 'dist')
+];
 
-if (fs.existsSync(frontendDistPath)) {
+let frontendDistPath = candidatePaths.find(p => fs.existsSync(path.join(p, 'index.html')));
+
+if (frontendDistPath) {
+  console.log(`Serving static frontend assets from: ${frontendDistPath}`);
   app.use(express.static(frontendDistPath));
   app.get('*', (req, res) => {
     res.sendFile(path.join(frontendDistPath, 'index.html'));
   });
 } else {
+  console.warn('Frontend build directory (dist/index.html) not found. Serving API endpoints only.');
   app.get('/', (req, res) => {
     res.json({ 
       status: 'ok', 
