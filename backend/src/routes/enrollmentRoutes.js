@@ -15,6 +15,7 @@ router.use(authMiddleware);
 router.post('/:courseId', enrollInCourse);
 router.post('/:courseId/payment', checkoutCoursePayment);
 router.get('/my', getMyEnrollments);
+router.get('/my-courses', getMyEnrollments);
 router.get('/:courseId/status', checkEnrollmentStatus);
 router.post('/:courseId/review', createReview);
 

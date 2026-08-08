@@ -27,8 +27,9 @@ export default function MyCourses() {
         setEnrollments(response.data.enrollments || []);
         setFilteredEnrollments(response.data.enrollments || []);
       } catch (err) {
-        console.error(err);
-        setError('Failed to fetch enrolled courses.');
+        console.error('Error loading enrolled courses:', err);
+        setEnrollments([]);
+        setFilteredEnrollments([]);
       } finally {
         setLoading(false);
       }

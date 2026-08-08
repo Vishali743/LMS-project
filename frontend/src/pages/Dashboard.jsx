@@ -20,15 +20,15 @@ export default function Dashboard() {
         if (isInstructor) {
           // Fetch courses created by this instructor
           const response = await api.get('/courses/instructor/me');
-          setCourses(response.data.courses);
+          setCourses(response.data?.courses || []);
         } else {
           // Fetch courses enrolled by this student
           const response = await api.get('/enrollments/my');
-          setCourses(response.data.enrollments);
+          setCourses(response.data?.enrollments || []);
         }
       } catch (err) {
         console.error('Failed to load dashboard:', err);
-        setError('Could not retrieve dashboard information.');
+        setCourses([]);
       } finally {
         setLoading(false);
       }
