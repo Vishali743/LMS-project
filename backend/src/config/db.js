@@ -19,6 +19,13 @@ const poolConfig = {
 let pool;
 
 async function initDB() {
+  // Instant check: if running on Vercel or cloud host without a remote DB_HOST, skip blocking TCP connection attempts
+  if ((process.env.VERCEL || process.env.RENDER) && (!process.env.DB_HOST || process.env.DB_HOST === 'localhost' || process.env.DB_HOST === '127.0.0.1')) {
+    console.warn('Cloud environment detected without remote DB_HOST. Operating in instant fail-safe mock dataset mode.');
+    pool = null;
+    return;
+  }
+
   try {
     // Connect without database selected first to create it if it doesn't exist
     const initialConfig = { ...poolConfig };
