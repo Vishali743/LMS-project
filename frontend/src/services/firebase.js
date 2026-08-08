@@ -22,12 +22,21 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID || "mock-app-id"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+// Initialize Firebase safely
+let app, auth, db, storage;
 const googleProvider = new GoogleAuthProvider();
-const db = getFirestore(app);
-const storage = getStorage(app);
+
+try {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+  storage = getStorage(app);
+} catch (err) {
+  console.warn('Firebase Web SDK initialization notice:', err.message);
+  auth = {};
+  db = {};
+  storage = {};
+}
 
 // Storage helper
 async function uploadToStorage(folderPath, file) {
