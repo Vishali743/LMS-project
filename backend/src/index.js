@@ -110,13 +110,15 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal Server Error: ' + err.message });
 });
 
-// Start Express server immediately to pass cloud health checks instantly
-const HOST = process.env.HOST || '0.0.0.0';
-const parsedPort = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
+// Start Express server immediately in standalone Node environment (bypassed on Vercel Serverless)
+if (!process.env.VERCEL) {
+  const HOST = process.env.HOST || '0.0.0.0';
+  const parsedPort = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
 
-app.listen(parsedPort, HOST, () => {
-  console.log(`LMS Server successfully booted and listening on ${HOST}:${parsedPort}`);
-});
+  app.listen(parsedPort, HOST, () => {
+    console.log(`LMS Server successfully booted and listening on ${HOST}:${parsedPort}`);
+  });
+}
 
 // Asynchronously bootstrap background services (DB, Firebase, Mongo) without blocking HTTP requests
 async function bootstrap() {
